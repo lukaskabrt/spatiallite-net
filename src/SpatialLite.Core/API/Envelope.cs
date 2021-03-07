@@ -1,215 +1,204 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace SpatialLite.Core.API {
+namespace SpatialLite.Core.API
+{
     /// <summary>
-    /// Represents minimal bounding box of a <see cref="IGeometry"/> object.
+    /// Represents minimal bounding box of a set of coordinates.
     /// </summary>
-    public class Envelope {
-
+    public struct Envelope
+    {
         /// <summary>
-        /// Empty Envelope, that has all it's bounds set to double.NaN
+        /// Empty Envelope.
         /// </summary>
-        public static Envelope Empty = new Envelope();
+        /// <remarks>
+        /// Empty envelope has its min values greater that max values.
+        /// </remarks>
+        public static readonly Envelope Empty = new Envelope(0, -1, 0, -1);
 
-        private const int XIndex = 0;
-        private const int YIndex = 1;
-        private const int ZIndex = 2;
-        private const int MIndex = 3;
-
-        private double[][] _bounds = new double[][] {
-            new double[] { double.NaN, double.NaN },
-            new double[] { double.NaN, double.NaN },
-            new double[] { double.NaN, double.NaN },
-            new double[] { double.NaN, double.NaN } };
-
-        /// <summary>
-        /// Initializes a new instance of the <c>Envelope</c> class that is empty and has all it's values initialized to <c>double.NaN</c>.
-        /// </summary>
-        public Envelope() {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <c>Envelope</c> class with the single coordinate.
-        /// </summary>
-        /// <param name="coord">The coordinate used initialize <c>Envelope</c></param>
-        public Envelope(Coordinate coord) {
-            this.Initialize(coord.X, coord.X, coord.Y, coord.Y, coord.Z, coord.Z, coord.M, coord.M);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <c>Envelope</c> class that covers specified coordinates.
-        /// </summary>
-        /// <param name="coords">The coordinates to be covered.</param>
-        public Envelope(IEnumerable<Coordinate> coords) {
-            this.Extend(coords);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <c>Envelope</c> class as copy of specified <c>Envelope</c>.
-        /// </summary>
-        /// <param name="source">The <c>Envelope</c> object whose values are to be copied.</param>
-        public Envelope(Envelope source) {
-            this.Initialize(source.MinX, source.MaxX, source.MinY, source.MaxY, source.MinZ, source.MaxZ, source.MinM, source.MaxM);
-        }
+        private readonly float _minX;
+        private readonly float _maxX;
+        private readonly float _minY;
+        private readonly float _maxY;
 
         /// <summary>
         /// Gets Envelope's minimal x-coordinate.
         /// </summary>
-        public double MinX {
-            get { return _bounds[XIndex][0]; }
-        }
+        public float MinX => _minX;
 
         /// <summary>
         /// Gets Envelope's maximal x-coordinate.
         /// </summary>
-        public double MaxX {
-            get { return _bounds[XIndex][1]; }
-        }
+        public float MaxX => _maxX;
 
         /// <summary>
         /// Gets Envelope's minimal y-coordinate.
         /// </summary>
-        public double MinY {
-            get { return _bounds[YIndex][0]; }
-        }
+        public float MinY => _minY;
 
         /// <summary>
         /// Gets Envelope's maximal y-coordinate.
         /// </summary>
-        public double MaxY {
-            get { return _bounds[YIndex][1]; }
-        }
+        public float MaxY => _maxY;
 
         /// <summary>
-        /// Gets Envelope's minimal z-coordinate.
+        /// Returns the difference between the maximum and minimum X coordinates.
         /// </summary>
-        public double MinZ {
-            get { return _bounds[ZIndex][0]; }
-        }
-
-        /// <summary>
-        /// Gets Envelope's maximal z-coordinate.
-        /// </summary>
-        public double MaxZ {
-            get { return _bounds[ZIndex][1]; }
-        }
-
-        /// <summary>
-        /// Gets Envelope's minimal m-coordinate.
-        /// </summary>
-        public double MinM {
-            get { return _bounds[MIndex][0]; }
-        }
-
-        /// <summary>
-        /// Gets Envelope's maximal m-coordinate.
-        /// </summary>
-        public double MaxM {
-            get { return _bounds[MIndex][1]; }
-        }
-
-        /// <summary>
-        /// Returns the difference between the maximum and minimum x values.
-        /// </summary>
-        /// <returns>max x - min x, or 0 if this is a null <c>Envelope</c>.</returns>
-        public double Width {
-            get {
-                if (this.IsEmpty) {
+        /// <returns>Width of the envelope.</returns>
+        public float Width
+        {
+            get
+            {
+                if (this.IsEmpty)
+                {
                     return 0;
                 }
 
-                return _bounds[XIndex][1] - _bounds[XIndex][0];
+                return _maxX - _minX;
             }
         }
 
         /// <summary>
-        /// Returns the difference between the maximum and minimum y values.
+        /// Returns the difference between the maximum and minimum y coordinates.
         /// </summary>
-        /// <returns>max y - min y, or 0 if this is a null <c>Envelope</c>.</returns>
-        public double Height {
-            get {
-                if (this.IsEmpty) {
+        /// <returns>Height of the envelope.</returns>
+        public float Height
+        {
+            get
+            {
+                if (this.IsEmpty)
+                {
                     return 0;
                 }
 
-                return _bounds[YIndex][1] - _bounds[YIndex][0];
+                return _maxY - _minY;
             }
         }
 
         /// <summary>
         /// Checks if this Envelope equals the empty Envelope.
         /// </summary>
-        public bool IsEmpty {
-            get {
-                return this.Equals(Envelope.Empty);
+        public bool IsEmpty => _minX > _maxX;
+
+        /// <summary>
+        /// Initializes an <see cref="Envelope"/> with the single coordinate.
+        /// </summary>
+        /// <param name="coord">The coordinate used initialize <see cref="Envelope"/></param>
+        public Envelope(Coordinate coord)
+        {
+            if (coord.IsEmpty)
+            {
+                _minX = _minY = 0;
+                _maxX = _maxY = -1;
+                return;
+            }
+
+            _minX = coord.X;
+            _maxX = coord.X;
+            _minY = coord.Y;
+            _maxY = coord.Y;
+        }
+
+        /// <summary>
+        /// Initializes an <see cref="Envelope"/> as copy of the specified envelope.
+        /// </summary>
+        /// <param name="source">The envelope to be copied.</param>
+        public Envelope(Envelope source)
+        {
+            _minX = source.MinX;
+            _maxX = source.MaxX;
+            _minY = source.MinY;
+            _maxY = source.MaxY;
+        }
+
+        /// <summary>
+        /// Initializes an <see cref="Envelope"/> that covers specified coordinates.
+        /// </summary>
+        /// <param name="coords">The coordinates to be covered.</param>
+        public Envelope(IReadOnlyList<Coordinate> coords)
+        {
+            _minX = _minY = 0;
+            _maxX = _maxY = -1;
+
+            for (int i = 0; i < coords.Count; i++)
+            {
+                if (coords[i].IsEmpty) continue;
+
+                if (this.IsEmpty)
+                {
+                    _minX = coords[i].X;
+                    _maxX = coords[i].X;
+                    _minY = coords[i].Y;
+                    _maxY = coords[i].Y;
+                }
+                else
+                {
+                    _minX = _minX < coords[i].X ? _minX : coords[i].X;
+                    _maxX = _maxX > coords[i].X ? _maxX : coords[i].X;
+                    _minY = _minY < coords[i].Y ? _minY : coords[i].Y;
+                    _maxY = _maxY > coords[i].Y ? _maxY : coords[i].Y;
+                }
             }
         }
+
+        /// <summary>
+        /// Initializes an <see cref="Envelope"/> with specified values.
+        /// </summary>
+        /// <param name="minX">Minimal X ordinate.</param>
+        /// <param name="maxX">Maximal X ordinate.</param>
+        /// <param name="minY">Minimal Y ordinate.</param>
+        /// <param name="maxY">Maximal Y ordinate.</param>
+        private Envelope(float minX, float maxX, float minY, float maxY)
+        {
+            _minX = minX;
+            _maxX = maxX;
+            _minY = minY;
+            _maxY = maxY;
+        }
+
 
         /// <summary>
         /// Extends this <c>Envelope</c> to cover specified <c>Coordinate</c>.
         /// </summary>
         /// <param name="coord">The <c>Coordinate</c> to be covered by extended Envelope.</param>
-        public void Extend(Coordinate coord) {
-            if (double.IsNaN(_bounds[XIndex][0]) || double.IsNaN(_bounds[YIndex][0])) {
-                _bounds[XIndex][0] = _bounds[XIndex][1] = coord.X;
-                _bounds[YIndex][0] = _bounds[YIndex][1] = coord.Y;
-                _bounds[ZIndex][0] = _bounds[ZIndex][1] = coord.Z;
-                _bounds[MIndex][0] = _bounds[MIndex][1] = coord.M;
-            } else {
-                if (coord.X < _bounds[XIndex][0]) { _bounds[XIndex][0] = coord.X; }
-                if (coord.X > _bounds[XIndex][1]) { _bounds[XIndex][1] = coord.X; }
+        public Envelope Extend(Coordinate coord)
+        {
+            if (this.Covers(coord)) return this;
 
-                if (coord.Y < _bounds[YIndex][0]) { _bounds[YIndex][0] = coord.Y; }
-                if (coord.Y > _bounds[YIndex][1]) { _bounds[YIndex][1] = coord.Y; }
+            if (this.IsEmpty) return new Envelope(coord);
 
-                if (coord.Z < _bounds[ZIndex][0]) { _bounds[ZIndex][0] = coord.Z; }
-                if (coord.Z > _bounds[ZIndex][1]) { _bounds[ZIndex][1] = coord.Z; }
-
-                if (coord.M < _bounds[MIndex][0]) { _bounds[MIndex][0] = coord.M; }
-                if (coord.M > _bounds[MIndex][1]) { _bounds[MIndex][1] = coord.M; }
-            }
+            return new Envelope(
+                _minX < coord.X ? _minX : coord.X,
+                _maxX > coord.X ? _maxX : coord.X,
+                _minY < coord.Y ? _minY : coord.Y,
+                _maxY > coord.Y ? _maxY : coord.Y
+           );
         }
 
         /// <summary>
         /// Extends this <c>Envelope</c> to cover specified <c>Coordinates</c>.
         /// </summary>
         /// <param name="coords">The collection of Coordinates to be covered by extended Envelope.</param>
-        public void Extend(IEnumerable<Coordinate> coords) {
-            foreach (var coord in coords) {
-                this.Extend(coord);
-            }
+        public Envelope Extend(IReadOnlyList<Coordinate> coords)
+        {
+            var envelop = new Envelope(coords);
+            return Extend(envelop);
         }
 
         /// <summary>
         /// Extends this <c>Envelope</c> to cover specified <c>Envelope</c>.
         /// </summary>
         /// <param name="envelope">The <c>Envelope</c> to be covered by extended Envelope.</param>
-        public void Extend(Envelope envelope) {
-            if (double.IsNaN(_bounds[XIndex][0]) || double.IsNaN(_bounds[YIndex][0])) {
-                _bounds[XIndex][0] = envelope.MinX;
-                _bounds[XIndex][1] = envelope.MaxX;
+        public Envelope Extend(Envelope envelope)
+        {
+            if (this.Covers(envelope) || envelope.IsEmpty) return this;
 
-                _bounds[YIndex][0] = envelope.MinY;
-                _bounds[YIndex][1] = envelope.MaxY;
-
-                _bounds[ZIndex][0] = envelope.MinZ;
-                _bounds[ZIndex][1] = envelope.MaxZ;
-
-                _bounds[MIndex][0] = envelope.MinM;
-                _bounds[MIndex][1] = envelope.MaxM;
-            } else {
-                if (envelope.MinX < _bounds[XIndex][0]) { _bounds[XIndex][0] = envelope.MinX; }
-                if (envelope.MaxX > _bounds[XIndex][1]) { _bounds[XIndex][1] = envelope.MaxX; }
-
-                if (envelope.MinY < _bounds[YIndex][0]) { _bounds[YIndex][0] = envelope.MinY; }
-                if (envelope.MaxY > _bounds[YIndex][1]) { _bounds[YIndex][1] = envelope.MaxY; }
-
-                if (envelope.MinZ < _bounds[ZIndex][0]) { _bounds[ZIndex][0] = envelope.MinZ; }
-                if (envelope.MaxZ > _bounds[ZIndex][1]) { _bounds[ZIndex][1] = envelope.MaxZ; }
-
-                if (envelope.MinM < _bounds[MIndex][0]) { _bounds[MIndex][0] = envelope.MinM; }
-                if (envelope.MaxM > _bounds[MIndex][1]) { _bounds[MIndex][1] = envelope.MaxM; }
-            }
+            return new Envelope(
+                _minX < envelope._minX ? _minX : envelope._minX,
+                _maxX > envelope._maxX ? _maxX : envelope._maxX,
+                _minY < envelope._minY ? _minY : envelope._minY,
+                _maxY > envelope._maxY ? _maxY : envelope._maxY
+           );
         }
 
         /// <summary>
@@ -217,9 +206,10 @@ namespace SpatialLite.Core.API {
         /// </summary>
         /// <param name="obj">The <c>object</c> to compare with the current <c>Envelope</c></param>
         /// <returns>true if the specified  <c>object</c> is equal to the current <c>Envelope</c>; otherwise, false.</returns>
-        public override bool Equals(object obj) {
-            Envelope other = obj as Envelope;
-            if (other == null) {
+        public override bool Equals(object obj)
+        {
+            if (obj is not Envelope other)
+            {
                 return false;
             }
 
@@ -231,15 +221,13 @@ namespace SpatialLite.Core.API {
         /// </summary>
         /// <param name="other">The <c>Envelope</c> to compare with the current <c>Envelope</c></param>
         /// <returns>true if the specified  <c>Envelope</c> is equal to the current <c>Envelope</c>; otherwise, false.</returns>
-        public bool Equals(Envelope other) {
-            return ((this.MinX == other.MinX) || (double.IsNaN(this.MinX) && double.IsNaN(other.MinX))) &&
-                ((this.MinY == other.MinY) || (double.IsNaN(this.MinY) && double.IsNaN(other.MinY))) &&
-                ((this.MinZ == other.MinZ) || (double.IsNaN(this.MinZ) && double.IsNaN(other.MinZ))) &&
-                ((this.MinM == other.MinM) || (double.IsNaN(this.MinM) && double.IsNaN(other.MinM))) &&
-                ((this.MaxX == other.MaxX) || (double.IsNaN(this.MaxX) && double.IsNaN(other.MaxX))) &&
-                ((this.MaxY == other.MaxY) || (double.IsNaN(this.MaxY) && double.IsNaN(other.MaxY))) &&
-                ((this.MaxZ == other.MaxZ) || (double.IsNaN(this.MaxZ) && double.IsNaN(other.MaxZ))) &&
-                ((this.MaxM == other.MaxM) || (double.IsNaN(this.MaxM) && double.IsNaN(other.MaxM)));
+        public bool Equals(Envelope other)
+        {
+            return
+                (this.MinX == other.MinX) &&
+                (this.MinY == other.MinY) &&
+                (this.MaxX == other.MaxX) &&
+                (this.MaxY == other.MaxY);
         }
 
         /// <summary>
@@ -252,8 +240,10 @@ namespace SpatialLite.Core.API {
         /// <returns>
         /// <c>true</c> if the <c>Envelope</c>s overlap.
         /// </returns>
-        public bool Intersects(Envelope other) {
-            if (this.IsEmpty || other.IsEmpty) {
+        public bool Intersects(Envelope other)
+        {
+            if (this.IsEmpty || other.IsEmpty)
+            {
                 return false;
             }
 
@@ -266,10 +256,9 @@ namespace SpatialLite.Core.API {
         /// <param name="x">the x-coordinate of the point which this <c>Envelope</c> is being checked for containing</param>
         /// <param name="y">the y-coordinate of the point which this <c>Envelope</c> is being checked for containing</param>
         /// <returns> <c>true</c> if <c>(x, y)</c> lies in the interior or on the boundary of this <c>Envelope</c>.</returns>
-        public bool Covers(double x, double y) {
-            if (this.IsEmpty) {
-                return false;
-            }
+        public bool Covers(float x, float y)
+        {
+            if (this.IsEmpty) return false;
 
             return x >= this.MinX &&
                 x <= this.MaxX &&
@@ -282,21 +271,22 @@ namespace SpatialLite.Core.API {
         ///</summary>
         /// <param name="p">the point which this <c>Envelope</c> is being checked for containing</param>
         /// <returns><c>true</c> if the point lies in the interior or on the boundary of this <c>Envelope</c>.</returns>
-        public bool Covers(Coordinate p) {
+        public bool Covers(Coordinate p)
+        {
             return Covers(p.X, p.Y);
         }
 
         ///<summary>
-        /// Tests if the <c>Envelope other</c> lies wholely inside this <c>Envelope</c> (inclusive of the boundary).
+        /// Tests if the <c>Envelope other</c> lies wholly inside this <c>Envelope</c> (inclusive of the boundary).
         ///</summary>
         /// <param name="other">the <c>Envelope</c> to check</param>
         /// <returns>true if this <c>Envelope</c> covers the <c>other</c></returns>
-        public bool Covers(Envelope other) {
-            if (this.IsEmpty || other.IsEmpty) {
-                return false;
-            }
+        public bool Covers(Envelope other)
+        {
+            if (this.IsEmpty || other.IsEmpty) return false;
 
-            return other.MinX >= this.MinX &&
+            return
+                other.MinX >= this.MinX &&
                 other.MaxX <= this.MaxX &&
                 other.MinY >= this.MinY &&
                 other.MaxY <= this.MaxY;
@@ -306,100 +296,9 @@ namespace SpatialLite.Core.API {
         /// Serves as a hash function for the <c>Envelope</c> class.
         /// </summary>
         /// <returns>Hash code for current Envelope object.</returns>
-        public override int GetHashCode() {
-            return _bounds.GetHashCode();
-        }
-
-        /// <summary>
-        /// Initializes MinX, MaxX, MinY, MaxY, MinZ and MaxZ properties from the given coordinates.
-        /// </summary>
-        /// <param name="x1">First x-coordinate.</param>
-        /// <param name="x2">Second x-coordinate.</param>
-        /// <param name="y1">First y-coordinate.</param>
-        /// <param name="y2">Second y-coordinate.</param>
-        public void Initialize(double x1, double x2, double y1, double y2) {
-            var sortedX = this.SortCoordinates(x1, x2);
-            _bounds[XIndex][0] = sortedX[0];
-            _bounds[XIndex][1] = sortedX[1];
-
-            var sortedY = this.SortCoordinates(y1, y2);
-            _bounds[YIndex][0] = sortedY[0];
-            _bounds[YIndex][1] = sortedY[1];
-        }
-
-        /// <summary>
-        /// Initializes MinX, MaxX, MinY, MaxY, MinZ and MaxZ properties from the given coordinates.
-        /// </summary>
-        /// <param name="x1">First x-coordinate.</param>
-        /// <param name="x2">Second x-coordinate.</param>
-        /// <param name="y1">First y-coordinate.</param>
-        /// <param name="y2">Second y-coordinate.</param>
-        /// <param name="z1">First z-coordinate.</param>
-        /// <param name="z2">Second z-coordinate.</param>
-        public void Initialize(double x1, double x2, double y1, double y2, double z1, double z2) {
-            var sortedX = this.SortCoordinates(x1, x2);
-            _bounds[XIndex][0] = sortedX[0];
-            _bounds[XIndex][1] = sortedX[1];
-
-            var sortedY = this.SortCoordinates(y1, y2);
-            _bounds[YIndex][0] = sortedY[0];
-            _bounds[YIndex][1] = sortedY[1];
-
-            var sortedZ = this.SortCoordinates(z1, z2);
-            _bounds[ZIndex][0] = sortedZ[0];
-            _bounds[ZIndex][1] = sortedZ[1];
-        }
-
-        /// <summary>
-        /// Initializes MinX, MaxX, MinY, MaxY, MinZ and MaxZ properties from the given coordinates.
-        /// </summary>
-        /// <param name="x1">First x-coordinate.</param>
-        /// <param name="x2">Second x-coordinate.</param>
-        /// <param name="y1">First y-coordinate.</param>
-        /// <param name="y2">Second y-coordinate.</param>
-        /// <param name="z1">First z-coordinate.</param>
-        /// <param name="z2">Second z-coordinate.</param>
-        /// <param name="m1">First measure value.</param>
-        /// <param name="m2">Second measure value.</param>
-        public void Initialize(double x1, double x2, double y1, double y2, double z1, double z2, double m1, double m2) {
-            var sortedX = this.SortCoordinates(x1, x2);
-            _bounds[XIndex][0] = sortedX[0];
-            _bounds[XIndex][1] = sortedX[1];
-
-            var sortedY = this.SortCoordinates(y1, y2);
-            _bounds[YIndex][0] = sortedY[0];
-            _bounds[YIndex][1] = sortedY[1];
-
-            var sortedZ = this.SortCoordinates(z1, z2);
-            _bounds[ZIndex][0] = sortedZ[0];
-            _bounds[ZIndex][1] = sortedZ[1];
-
-            var sortedM = this.SortCoordinates(m1, m2);
-            _bounds[MIndex][0] = sortedM[0];
-            _bounds[MIndex][1] = sortedM[1];
-        }
-
-        /// <summary>
-        /// Sorts two coordinates
-        /// </summary>
-        /// <param name="c1">First coordinate.</param>
-        /// <param name="c2">Second coordinate.</param>
-        /// <returns>Array with sorted coordinates - [min, max]</returns>
-        /// <remarks>If any value is <c>double.NaN</c> the other is used for min and max.</remarks>
-        private double[] SortCoordinates(double c1, double c2) {
-            if (double.IsNaN(c1)) {
-                c1 = c2;
-            }
-
-            if (double.IsNaN(c2)) {
-                c2 = c1;
-            }
-
-            if (c1 > c2) {
-                return new double[] { c2, c1 };
-            } else {
-                return new double[] { c1, c2 };
-            }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_minX, _maxX, _minY, _maxY);
         }
     }
 }
