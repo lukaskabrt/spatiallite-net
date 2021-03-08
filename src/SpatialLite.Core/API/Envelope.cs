@@ -45,35 +45,13 @@ namespace SpatialLite.Core.API
         /// Returns the difference between the maximum and minimum X coordinates.
         /// </summary>
         /// <returns>Width of the envelope.</returns>
-        public float Width
-        {
-            get
-            {
-                if (this.IsEmpty)
-                {
-                    return 0;
-                }
-
-                return _maxX - _minX;
-            }
-        }
+        public float Width => this.IsEmpty ? 0 : _maxX - _minX;
 
         /// <summary>
         /// Returns the difference between the maximum and minimum y coordinates.
         /// </summary>
         /// <returns>Height of the envelope.</returns>
-        public float Height
-        {
-            get
-            {
-                if (this.IsEmpty)
-                {
-                    return 0;
-                }
-
-                return _maxY - _minY;
-            }
-        }
+        public float Height => this.IsEmpty ? 0 : _maxY - _minY;
 
         /// <summary>
         /// Checks if this Envelope equals the empty Envelope.
@@ -163,7 +141,7 @@ namespace SpatialLite.Core.API
         /// <param name="coord">The <c>Coordinate</c> to be covered by extended Envelope.</param>
         public Envelope Extend(Coordinate coord)
         {
-            if (this.Covers(coord)) return this;
+            if (this.Covers(coord) || coord.IsEmpty) return this;
 
             if (this.IsEmpty) return new Envelope(coord);
 
@@ -202,35 +180,6 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Determines whether specific <c>object</c> instance is equal to the current <c>Envelope</c>.
-        /// </summary>
-        /// <param name="obj">The <c>object</c> to compare with the current <c>Envelope</c></param>
-        /// <returns>true if the specified  <c>object</c> is equal to the current <c>Envelope</c>; otherwise, false.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is not Envelope other)
-            {
-                return false;
-            }
-
-            return this.Equals(other);
-        }
-
-        /// <summary>
-        /// Determines whether two <c>Envelope</c> instances are equal.
-        /// </summary>
-        /// <param name="other">The <c>Envelope</c> to compare with the current <c>Envelope</c></param>
-        /// <returns>true if the specified  <c>Envelope</c> is equal to the current <c>Envelope</c>; otherwise, false.</returns>
-        public bool Equals(Envelope other)
-        {
-            return
-                (this.MinX == other.MinX) &&
-                (this.MinY == other.MinY) &&
-                (this.MaxX == other.MaxX) &&
-                (this.MaxY == other.MaxY);
-        }
-
-        /// <summary>
         /// Check if the region defined by <c>other</c>
         /// overlaps (intersects) the region of this <c>Envelope</c>.
         /// </summary>
@@ -242,45 +191,32 @@ namespace SpatialLite.Core.API
         /// </returns>
         public bool Intersects(Envelope other)
         {
-            if (this.IsEmpty || other.IsEmpty)
-            {
-                return false;
-            }
+            if (this.IsEmpty || other.IsEmpty) return false;
 
             return !(other.MinX > this.MaxX || other.MaxX < this.MinX || other.MinY > this.MaxY || other.MaxY < other.MinY);
         }
 
         ///<summary>
-        /// Tests if the given point lies in or on the envelope.
+        /// Tests whether the given <see cref="Coordinate"/> lies in or on the envelope.
         ///</summary>
-        /// <param name="x">the x-coordinate of the point which this <c>Envelope</c> is being checked for containing</param>
-        /// <param name="y">the y-coordinate of the point which this <c>Envelope</c> is being checked for containing</param>
-        /// <returns> <c>true</c> if <c>(x, y)</c> lies in the interior or on the boundary of this <c>Envelope</c>.</returns>
-        public bool Covers(float x, float y)
+        /// <param name="coordinate">the <see cref="Coordinate"/> to check.</param>
+        /// <returns>True if the <paramref name="coordinate"/> lies in the interior or on the boundary of this envelope.</returns>
+        public bool Covers(Coordinate coordinate)
         {
             if (this.IsEmpty) return false;
 
-            return x >= this.MinX &&
-                x <= this.MaxX &&
-                y >= this.MinY &&
-                y <= this.MaxY;
+            return
+                coordinate.X >= this.MinX &&
+                coordinate.X <= this.MaxX &&
+                coordinate.Y >= this.MinY &&
+                coordinate.Y <= this.MaxY;
         }
 
         ///<summary>
-        /// Tests if the given point lies in or on the envelope.
+        /// Tests if an <see cref="Envelope"/> lies inside this envelope (inclusive of the boundary).
         ///</summary>
-        /// <param name="p">the point which this <c>Envelope</c> is being checked for containing</param>
-        /// <returns><c>true</c> if the point lies in the interior or on the boundary of this <c>Envelope</c>.</returns>
-        public bool Covers(Coordinate p)
-        {
-            return Covers(p.X, p.Y);
-        }
-
-        ///<summary>
-        /// Tests if the <c>Envelope other</c> lies wholly inside this <c>Envelope</c> (inclusive of the boundary).
-        ///</summary>
-        /// <param name="other">the <c>Envelope</c> to check</param>
-        /// <returns>true if this <c>Envelope</c> covers the <c>other</c></returns>
+        /// <param name="other">The <c>Envelope</c> to check.</param>
+        /// <returns>True if this envelope covers the <paramref name="other"/></returns>
         public bool Covers(Envelope other)
         {
             if (this.IsEmpty || other.IsEmpty) return false;
@@ -293,12 +229,77 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Serves as a hash function for the <c>Envelope</c> class.
+        /// Expands <see cref="Envelope"/> on every side by the specified distance.
+        /// </summary>
+        /// <param name="dx">Distance in the X-axis direction.</param>
+        /// <param name="dy">Distance in the Y-axis direction.</param>
+        /// <returns>Expanded <see cref="Envelope"/>.</returns>
+        /// <remarks>Both positive and negative values for <paramref name="dx"/> and <paramref name="dy"/> are allowed.</remarks>
+        public Envelope Expand(float dx, float dy)
+        {
+            if (this.IsEmpty) return Envelope.Empty;
+
+            return new Envelope(_minX - dx, _maxX + dx, _minY - dy, _maxY + dy);
+        }
+
+        /// <summary>
+        /// Determines whether specific <c>object</c> instance is equal to the current <see cref="Envelope"/>.
+        /// </summary>
+        /// <param name="obj">The <c>object</c> to compare with the current Envelope</param>
+        /// <returns>True if the specified <c>object</c> is equal to the current <c>Envelope</c>.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is not Envelope other)
+            {
+                return false;
+            }
+
+            return this.Equals(other);
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="Envelope"/> instances are equal.
+        /// </summary>
+        /// <param name="other">The Envelope to compare with the current Envelope</param>
+        /// <returns>True if the specified <c>Envelope</c> is equal to the current <c>Envelope</c>.</returns>
+        public bool Equals(Envelope other)
+        {
+            return
+                (this.MinX == other.MinX) &&
+                (this.MinY == other.MinY) &&
+                (this.MaxX == other.MaxX) &&
+                (this.MaxY == other.MaxY);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for the <see cref="Envelope"/> class.
         /// </summary>
         /// <returns>Hash code for current Envelope object.</returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(_minX, _maxX, _minY, _maxY);
+        }
+
+        /// <summary>
+        /// Determines whether specific <see cref="Envelope"/> values are equal.
+        /// </summary>
+        /// <param name="lhs">Envelope to compare</param>
+        /// <param name="rhs">Envelope to compare</param>
+        /// <returns>True if the specified <c>Envelope</c> values are equal.</returns>
+        public static bool operator ==(Envelope lhs, Envelope rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        /// <summary>
+        /// Determines whether specific <see cref="Envelope"/> values are not equal.
+        /// </summary>
+        /// <param name="lhs">Envelope to compare</param>
+        /// <param name="rhs">Envelope to compare</param>
+        /// <returns>True if the specified <c>Envelope</c> values are not equal.</returns>
+        public static bool operator !=(Envelope lhs, Envelope rhs)
+        {
+            return !(lhs == rhs);
         }
     }
 }

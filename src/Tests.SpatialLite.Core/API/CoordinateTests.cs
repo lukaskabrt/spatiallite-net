@@ -1,4 +1,5 @@
 ﻿
+using FluentAssertions;
 using SpatialLite.Core.API;
 using Xunit;
 
@@ -6,179 +7,155 @@ namespace Tests.SpatialLite.Core.API
 {
     public class CoordinateTests
     {
-        float xCoordinate = 3.5f;
-        float yCoordinate = 4.2f;
-        float zCoordinate = 10.5f;
+        const float xCoordinate = 3.5f;
+        const float yCoordinate = 4.2f;
+        const float zCoordinate = 10.5f;
 
         [Fact]
-        public void Constructor_XY_SetsXYValuesAndZMNaN()
+        public void Constructor_XY_SetsXYValuesAndZNaN()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate);
 
-            Assert.Equal(xCoordinate, target.X);
-            Assert.Equal(yCoordinate, target.Y);
-            Assert.Equal(double.NaN, target.Z);
+            target.X.Should().Be(xCoordinate);
+            target.Y.Should().Be(yCoordinate);
+            target.Z.Should().Be(float.NaN);
         }
 
         [Fact]
-        public void Constructor_XYZ_SetsXYZValuesAndMNaN()
+        public void Constructor_XYZ_SetsXYZValues()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
 
-            Assert.Equal(xCoordinate, target.X);
-            Assert.Equal(yCoordinate, target.Y);
-            Assert.Equal(zCoordinate, target.Z);
+            target.X.Should().Be(xCoordinate);
+            target.Y.Should().Be(yCoordinate);
+            target.Z.Should().Be(zCoordinate);
         }
+
+        /* Is3D */
 
         [Fact]
         public void Is3D_ReturnsFalseForNaNZCoordinate()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate);
 
-            Assert.False(target.Is3D);
+            target.Is3D.Should().BeFalse();
         }
 
         [Fact]
         public void Is3D_ReturnsTrueFor3D()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
 
-            Assert.True(target.Is3D);
+            target.Is3D.Should().BeTrue();
         }
+
+        /* Equals */
 
         [Fact]
         public void Equals_ReturnsTrueForCoordinateWithTheSameOrdinates()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
 
-            Assert.True(target.Equals(other));
+            target.Equals(other).Should().BeTrue();
         }
 
         [Fact]
-        public void Equals_ReturnsTrueForNaNCoordinates()
+        public void Equals_ReturnsTrueForTwoEmptyCoordinates()
         {
-            Coordinate target = new Coordinate(float.NaN, float.NaN, float.NaN);
-            Coordinate other = new Coordinate(float.NaN, float.NaN, float.NaN);
+            var target = Coordinate.Empty;
+            var other = Coordinate.Empty;
 
-            Assert.True(target.Equals(other));
+            target.Equals(other).Should().BeTrue();
         }
 
         [Fact]
         public void Equals_ReturnsFalseForNull()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
             object other = null;
 
-            Assert.False(target.Equals(other));
+            target.Equals(other).Should().BeFalse();
         }
 
         [Fact]
         public void Equals_ReturnsFalseForOtherObjectType()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
             object other = "string";
 
-            Assert.False(target.Equals(other));
+            target.Equals(other).Should().BeFalse();
         }
 
         [Fact]
-        public void Equals_ReturnsFalseForCoordinateWithDifferentOrdinates()
+        public void Equals_ReturnsFalseForEmptyAndNonEmptyCoordinates()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate + 1, yCoordinate + 1, zCoordinate + 1);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate); ;
+            var other = Coordinate.Empty;
 
-            Assert.False(target.Equals(other));
+            target.Equals(other).Should().BeFalse();
         }
 
-        [Fact]
-        public void Equals2D_ReturnsTrueForCoordinateWithTheSameOrdinates()
+        [Theory]
+        [InlineData(xCoordinate + 1, yCoordinate, zCoordinate)]
+        [InlineData(xCoordinate, yCoordinate + 1, zCoordinate)]
+        [InlineData(xCoordinate, yCoordinate, zCoordinate + 1)]
+        public void Equals_ReturnsFalseForCoordinateWithDifferentOrdinates(float x, float y, float z)
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var other = new Coordinate(x, y, z);
 
-            Assert.True(target.Equals2D(other));
+            target.Equals(other).Should().BeFalse();
+        }
+
+        /* Equals2D(Coordinate) */
+
+        [Fact]
+        public void Equals2D_ReturnsTrueForCoordinateWithSameXYOrdinates()
+        {
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+
+            target.Equals2D(other).Should().BeTrue();
         }
 
         [Fact]
         public void Equals2D_ReturnsTrueForCoordinateWithTheDifferentZOrdinates()
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate, yCoordinate, zCoordinate + 1);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var other = new Coordinate(xCoordinate, yCoordinate, zCoordinate + 1);
 
-            Assert.True(target.Equals2D(other));
+            target.Equals2D(other).Should().BeTrue();
         }
 
         [Fact]
-        public void Equals2D_ReturnsTrueForNaNCoordinates()
+        public void Equals2D_ReturnsTrueForEmptyCoordinates()
         {
-            Coordinate target = new Coordinate(float.NaN, float.NaN, float.NaN);
-            Coordinate other = new Coordinate(float.NaN, float.NaN, float.NaN);
+            var target = Coordinate.Empty;
+            var other = Coordinate.Empty;
 
-            Assert.True(target.Equals2D(other));
+            target.Equals2D(other).Should().BeTrue();
         }
 
-        [Fact]
-        public void Equals2D_ReturnsFalseForCoordinateWithDifferentXYOrdinates()
-        {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate + 1, yCoordinate + 1, zCoordinate);
 
-            Assert.False(target.Equals2D(other));
+        [Fact]
+        public void Equals2D_ReturnsFalseForEmptyAndNonEmptyCoordinates()
+        {
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate); ;
+            var other = Coordinate.Empty;
+
+            target.Equals2D(other).Should().BeFalse();
         }
 
-        [Fact]
-        public void EqualsOperator_ReturnsTrueForCoordinateWithTheSameOrdinates()
+        [Theory]
+        [InlineData(xCoordinate + 1, yCoordinate)]
+        [InlineData(xCoordinate, yCoordinate + 1)]
+        public void Equals2D_ReturnsFalseForCoordinateWithDifferentXYOrdinates(float x, float y)
         {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
+            var other = new Coordinate(x, y, zCoordinate);
 
-            Assert.True(target == other);
-        }
-
-        [Fact]
-        public void EqualsOperator_ReturnsTrueForNaNCoordinates()
-        {
-            Coordinate target = new Coordinate(float.NaN, float.NaN, float.NaN);
-            Coordinate other = new Coordinate(float.NaN, float.NaN, float.NaN);
-
-            Assert.True(target == other);
-        }
-
-        [Fact]
-        public void EqualsOperator_ReturnsFalseForCoordinateWithDifferentOrdinates()
-        {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate + 1, yCoordinate + 1, zCoordinate + 1);
-
-            Assert.False(target == other);
-        }
-
-        [Fact]
-        public void NotEqualsOperator_ReturnsFalseForCoordinateWithTheSameOrdinates()
-        {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-
-            Assert.False(target != other);
-        }
-
-        [Fact]
-        public void NotEqualsOperator_ReturnsFalseForNaNCoordinates()
-        {
-            Coordinate target = new Coordinate(float.NaN, float.NaN, float.NaN);
-            Coordinate other = new Coordinate(float.NaN, float.NaN, float.NaN);
-
-            Assert.False(target != other);
-        }
-
-        [Fact]
-        public void NotEqualsOperator_ReturnsTrueForCoordinateWithDifferentOrdinates()
-        {
-            Coordinate target = new Coordinate(xCoordinate, yCoordinate, zCoordinate);
-            Coordinate other = new Coordinate(xCoordinate + 1, yCoordinate + 1, zCoordinate + 1);
-
-            Assert.True(target != other);
+            target.Equals2D(other).Should().BeFalse();
         }
     }
 }

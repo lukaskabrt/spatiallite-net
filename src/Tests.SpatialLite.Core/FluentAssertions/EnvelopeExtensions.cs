@@ -2,7 +2,7 @@
 using FluentAssertions.Execution;
 using SpatialLite.Core.API;
 
-namespace Tests.SpatialLite.Core.API
+namespace Tests.SpatialLite.Core.FluentAssertions
 {
     public static class EnvelopeExtensions
     {

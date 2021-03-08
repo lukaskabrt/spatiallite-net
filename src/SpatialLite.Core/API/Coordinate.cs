@@ -16,22 +16,22 @@ namespace SpatialLite.Core.API
         public static readonly Coordinate Empty = new Coordinate(float.NaN, float.NaN, float.NaN);
 
         /// <summary>
-        /// Gets the X-coordinate
+        /// Gets the X-coordinate.
         /// </summary>
         public float X { get; private set; }
 
         /// <summary>
-        /// Gets the Y-coordinate
+        /// Gets the Y-coordinate.
         /// </summary>
         public float Y { get; private set; }
 
         /// <summary>
-        /// Gets the Z-coordinate
+        /// Gets the Z-coordinate.
         /// </summary>
         public float Z { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Coordinate"/> with X, Y ordinates.
+        /// Initializes a <see cref="Coordinate"/> with X, Y coordinates.
         /// </summary>
         /// <param name="x">X-coordinate value.</param>
         /// <param name="y">Y-coordinate value.</param>
@@ -43,7 +43,7 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Coordinate"/> with X, Y, Z ordinates.
+        /// Initializes a <see cref="Coordinate"/> with X, Y, Z coordinates.
         /// </summary>
         /// <param name="x">X-coordinate value.</param>
         /// <param name="y">Y-coordinate value.</param>
@@ -56,20 +56,17 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Gets a value indicating whether this coordinate has assigned <see cref="Coordinate.Z"/> coordinate.
+        /// Gets a value indicating whether this <see cref="Coordinate"/>has assigned <see cref="Z"/> coordinate.
         /// </summary>
-        public bool Is3D
-        {
-            get
-            {
-                return !double.IsNaN(this.Z);
-            }
-        }
+        public bool Is3D => !double.IsNaN(this.Z);
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Coordinate"/> represents <see cref="Coordinate.Empty"/>.
+        /// </summary>
         public bool IsEmpty => float.IsNaN(this.X) || float.IsNaN(this.Y);
 
         /// <summary>
-        /// Determines whether specific Coordinates values are equal
+        /// Determines whether specific <see cref="Coordinate"/> values are equal
         /// </summary>
         /// <param name="lhs">Coordinate to compare</param>
         /// <param name="rhs">Coordinate to compare</param>
@@ -80,7 +77,7 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Determines whether specific Coordinate values are not equal
+        /// Determines whether specific <see cref="Coordinate"/> values are not equal
         /// </summary>
         /// <param name="lhs">Coordinate to compare</param>
         /// <param name="rhs">Coordinate to compare</param>
@@ -91,9 +88,9 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Returns a <c>string</c> that represents the current <see cref="Coordinate"/>.
+        /// Returns a <c>string</c> representation of the current <see cref="Coordinate"/>.
         /// </summary>
-        /// <returns>A <c>string</c> that represents the current <see cref="Coordinate"/></returns>
+        /// <returns>A <c>string</c> representation of the current <see cref="Coordinate"/></returns>
         public override string ToString()
         {
             return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0}; {1}; {2}]", this.X, this.Y, this.Z);
@@ -106,13 +103,12 @@ namespace SpatialLite.Core.API
         /// <returns>true if the specified <c>object</c> is equal to the current <see cref="Coordinate"/> otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            Coordinate? other = obj as Coordinate?;
-            if (other == null)
+            if (obj is not Coordinate other)
             {
                 return false;
             }
 
-            return this.Equals(other.Value);
+            return this.Equals(other);
         }
 
         /// <summary>
@@ -122,10 +118,7 @@ namespace SpatialLite.Core.API
         /// <returns>true if the specified <see cref="Coordinate"/> is equal to the current <see cref="Coordinate"/>; otherwise, false.</returns>
         public bool Equals(Coordinate other)
         {
-            return
-                ((this.X == other.X) || (double.IsNaN(this.X) && double.IsNaN(other.X))) &&
-                ((this.Y == other.Y) || (double.IsNaN(this.Y) && double.IsNaN(other.Y))) &&
-                ((this.Z == other.Z) || (double.IsNaN(this.Z) && double.IsNaN(other.Z)));
+            return Equals2D(other) && ((this.Z == other.Z) || (double.IsNaN(this.Z) && double.IsNaN(other.Z)));
         }
 
         /// <summary>
@@ -138,15 +131,13 @@ namespace SpatialLite.Core.API
         }
 
         /// <summary>
-        /// Determines whether two <see cref="Coordinate"/> are equal in 2D space.
+        /// Determines whether two <see cref="Coordinate"/> are equal in the 2D space.
         /// </summary>
         /// <param name="other">The <see cref="Coordinate"/> to compare with the current <see cref="Coordinate"/></param>
-        /// <returns>true if the specified <see cref="Coordinate"/> is equal to the current <see cref="Coordinate"/> in 2D space otherwise, false.</returns>
+        /// <returns>true if the specified <see cref="Coordinate"/> is equal to the current <see cref="Coordinate"/> in the 2D space otherwise, false.</returns>
         public bool Equals2D(Coordinate other)
         {
-            return
-                ((this.X == other.X) || (double.IsNaN(this.X) && double.IsNaN(other.X))) &&
-                ((this.Y == other.Y) || (double.IsNaN(this.Y) && double.IsNaN(other.Y)));
+            return (this.IsEmpty && other.IsEmpty) || ((this.X == other.X) && (this.Y == other.Y));
         }
     }
 }

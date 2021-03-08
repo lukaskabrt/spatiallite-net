@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using SpatialLite.Core.API;
+using Tests.SpatialLite.Core.FluentAssertions;
 using Xunit;
 
 namespace Tests.SpatialLite.Core.API
@@ -7,6 +8,7 @@ namespace Tests.SpatialLite.Core.API
     public partial class EnvelopeTests
     {
         /* Envelope(Coordinate) */
+
         [Fact]
         public void InitializesEmptyEnvelopeForEmptyCoordinate()
         {
@@ -28,6 +30,7 @@ namespace Tests.SpatialLite.Core.API
         }
 
         /* Envelope(Envelope) */
+
         [Fact]
         public void CopiesEmptySourceEnvelope()
         {
@@ -39,12 +42,14 @@ namespace Tests.SpatialLite.Core.API
         [Fact]
         public void CopiesMinMaxValuesFromSourceEnvelope()
         {
-            var target = new Envelope(_envelopeS);
+            var source = new Envelope(new[] { new Coordinate(1, 2), new Coordinate(-1, -2) });
+            var target = new Envelope(source);
 
-            target.ShouldHaveSameBounds(_envelopeS);
+            target.ShouldHaveSameBounds(source);
         }
 
         /* Envelope(IReadOnlyList<Coordinate>) */
+
         [Fact]
         public void InitializesEmptyEnvelopeForEmptyList()
         {
