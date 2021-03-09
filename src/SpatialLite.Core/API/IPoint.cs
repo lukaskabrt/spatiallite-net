@@ -1,11 +1,13 @@
-﻿namespace SpatialLite.Core.API {
+﻿namespace SpatialLite.Core.Api
+{
     /// <summary>
-    /// Defines properties and methods for points.
+    /// Represents a point.
     /// </summary>
-    public interface IPoint : IGeometry {
-		/// <summary>
-		/// Gets position of the point.
-		/// </summary>
-		Coordinate Position { get; }
-	}
+    public interface IPoint : IGeometry
+    {
+        /// <summary>
+        /// Gets the position of the point.
+        /// </summary>
+        Coordinate Position { get; }
+    }
 }

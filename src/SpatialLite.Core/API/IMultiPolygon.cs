@@ -1,7 +1,9 @@
-﻿namespace SpatialLite.Core.API {
+﻿namespace SpatialLite.Core.Api
+{
     /// <summary>
-    /// Defines properties and methods for collections of polygons.
+    /// Represents a collection of <see cref="IPolygon"/>.
     /// </summary>
-    public interface IMultiPolygon : IGeometryCollection<IPolygon> {
-	}
+    public interface IMultiPolygon : IGeometryCollection<IPolygon>
+    {
+    }
 }

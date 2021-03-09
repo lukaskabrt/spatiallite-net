@@ -1,164 +1,151 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FluentAssertions;
+using SpatialLite.Core.Api;
+using SpatialLite.Core.Geometries;
 using System.Linq;
-using System.Text;
-
 using Xunit;
 
-using SpatialLite.Core;
-using SpatialLite.Core.API;
-using SpatialLite.Core.Geometries;
+namespace Tests.SpatialLite.Core.Geometries
+{
+    public class LineStringTests
+    {
 
-namespace Tests.SpatialLite.Core.Geometries {
-	public class LineStringTests {
+        Coordinate[] _coordinatesXY = new[] {
+                new Coordinate(12,10),
+                new Coordinate(22,20),
+                new Coordinate(32,30)
+        };
 
-		Coordinate[] _coordinatesXY = new Coordinate[] {
-				new Coordinate(12,10),
-				new Coordinate(22,20),
-				new Coordinate(32,30)
-		};
+        Coordinate[] _coordinatesXYZ = new[] {
+                new Coordinate(12,10,100),
+                new Coordinate(22,20,200),
+                new Coordinate(32,30,300)
+        };
 
-		Coordinate[] _coordinatesXYZ = new Coordinate[] {
-				new Coordinate(12,10,100),
-				new Coordinate(22,20,200),
-				new Coordinate(32,30,300)
-		};
+        private void CheckCoordinates(LineString target, Coordinate[] expectedPoints)
+        {
+            Assert.Equal(expectedPoints.Length, target.Coordinates.Count);
 
-		Coordinate[] _coordinatesXYZM = new Coordinate[] {
-				new Coordinate(12,10,100, 1000),
-				new Coordinate(22,20,200, 2000),
-				new Coordinate(32,30,300, 3000)
-		};
+            for (int i = 0; i < expectedPoints.Length; i++)
+            {
+                Assert.Equal(expectedPoints[i], target.Coordinates[i]);
+            }
+        }
 
+        [Fact]
+        public void Constructor_CreatesEmptyLineString()
+        {
+            var target = new LineString();
 
-		private void CheckCoordinates(LineString target, Coordinate[] expectedPoints) {
-			Assert.Equal(expectedPoints.Length, target.Coordinates.Count);
+            target.Coordinates.Should().BeEmpty();
+        }
 
-			for (int i = 0; i < expectedPoints.Length; i++) {
-				Assert.Equal(expectedPoints[i], target.Coordinates[i]);
-			}
-		}
+        [Fact]
+        public void Constructor_CreatesLineStringFromCoordinates()
+        {
+            var target = new LineString(_coordinatesXYZ);
 
-		[Fact]
-		public void Constructor__CreatesEmptyLineString() {
-			LineString target = new LineString();
+            target.Coordinates.Should().BeEquivalentTo(_coordinatesXYZ);
+        }
 
-			Assert.Equal(0, target.Coordinates.Count);
-		}
+        [Fact]
+        public void Is3D_ReturnsFalseForEmptyLineString()
+        {
+            var target = new LineString();
 
-		[Fact]
-		public void Constructor_IEnumerable_CreatesLineStringFromCoordinates() {
-			LineString target = new LineString(_coordinatesXYZ);
+            target.Is3D.Should().BeFalse();
+        }
 
-			CheckCoordinates(target, _coordinatesXYZ);
-		}
+        [Fact]
+        public void Is3D_ReturnsFalseForAll2DCoords()
+        {
+            var target = new LineString(_coordinatesXY);
 
-		[Fact]
-		public void Is3D_ReturnsFalseForEmptyLineString() {
-			LineString target = new LineString();
+            target.Is3D.Should().BeFalse();
+        }
 
-			Assert.False(target.Is3D);
-		}
+        [Fact]
+        public void Is3D_ReturnsTrueForAll3DCoords()
+        {
+            var target = new LineString(_coordinatesXYZ);
 
-		[Fact]
-		public void Is3D_ReturnsFalseForAll2DCoords() {
-			LineString target = new LineString(_coordinatesXY);
+            target.Is3D.Should().BeTrue();
+        }
 
-			Assert.False(target.Is3D);
-		}
+        [Fact]
+        public void Start_ReturnsEmptyCoordinateForEmptyLineString()
+        {
+            var target = new LineString();
 
-		[Fact]
-		public void Is3D_ReturnsTrueForAll3DCoords() {
-			LineString target = new LineString(_coordinatesXYZ);
+            target.Start.IsEmpty.Should().BeTrue();
+        }
 
-			Assert.True(target.Is3D);
-		}
+        [Fact]
+        public void Start_ReturnsFirstCoordinate()
+        {
+            var target = new LineString(_coordinatesXYZ);
 
-		[Fact]
-		public void IsMeasured_ReturnsFalseForEmptyLineString() {
-			LineString target = new LineString();
+            target.Start.Should().Equals(_coordinatesXYZ.First());
+        }
 
-			Assert.False(target.IsMeasured);
-		}
+        [Fact]
+        public void End_ReturnsEmptyCoordinateForEmptyLineString()
+        {
+            var target = new LineString();
 
-		[Fact]
-		public void IsMeasured_ReturnsFalseForNonMeasuredCoords() {
-			LineString target = new LineString(_coordinatesXYZ);
+            target.End.IsEmpty.Should().BeTrue();
+        }
 
-			Assert.False(target.IsMeasured);
-		}
+        [Fact]
+        public void End_ReturnsLastCoordinate()
+        {
+            LineString target = new LineString(_coordinatesXYZ);
 
-		[Fact]
-		public void IsMeasured_ReturnsTrueForMeasuredCoords() {
-			LineString target = new LineString(_coordinatesXYZM);
+            target.End.Should().Equals(_coordinatesXYZ.Last());
+        }
 
-			Assert.True(target.IsMeasured);
-		}
+        [Fact]
+        public void IsClosed_ReturnsTrueForClosedLineString()
+        {
+            var coordinates = new[] { new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(0, 0) };
+            var target = new LineString(coordinates);
 
-		[Fact]
-		public void Start_ReturnsEmptyCoordinateForEmptyLineString() {
-			LineString target = new LineString();
+            target.IsClosed.Should().BeTrue();
+        }
 
-			Assert.Equal(Coordinate.Empty, target.Start);
-		}
+        [Fact]
+        public void IsClosed_ReturnsFalseForOpenLineString()
+        {
+            var target = new LineString(_coordinatesXYZ);
 
-		[Fact]
-		public void Start_ReturnsFirstCoordinate() {
-			LineString target = new LineString(_coordinatesXYZ);
+            target.IsClosed.Should().BeFalse();
+        }
 
-			Assert.Equal(_coordinatesXYZ.First(), target.Start);
-		}
+        [Fact]
+        public void IsClosed_ReturnsFalseForEmptyLineString()
+        {
+            var target = new LineString();
 
-		[Fact]
-		public void End_ReturnsEmptyCoordinateForEmptyLineString() {
-			LineString target = new LineString();
+            target.IsClosed.Should().BeFalse();
+        }
 
-			Assert.Equal(Coordinate.Empty, target.End);
-		}
+        [Fact]
+        public void GetEnvelope_ReturnsEmptyEnvelopeForEmptyLineString()
+        {
+            var target = new LineString();
 
-		[Fact]
-		public void End_ReturnsLastCoordinate() {
-			LineString target = new LineString(_coordinatesXYZ);
+            var envelope = target.GetEnvelope();
 
-			Assert.Equal(_coordinatesXYZ.Last(), target.End);
-		}
+            envelope.IsEmpty.Should().BeTrue();
+        }
 
-		[Fact]
-		public void IsClosed_ReturnsTrueForClosedLineString() {
-			LineString target = new LineString(_coordinatesXYZ);
-			target.Coordinates.Add(target.Coordinates[0]);
+        [Fact]
+        public void GetEnvelope_ReturnsEnvelopeOfLineString()
+        {
+            var target = new LineString(_coordinatesXYZ);
 
-			Assert.True(target.IsClosed);
-		}
+            var envelope = target.GetEnvelope();
 
-		[Fact]
-		public void IsClosed_ReturnsFalseForOpenLineString() {
-			LineString target = new LineString(_coordinatesXYZ);
-
-			Assert.False(target.IsClosed);
-		}
-
-		[Fact]
-		public void IsClosed_ReturnsFalseForEmptyLineString() {
-			LineString target = new LineString();
-
-			Assert.False(target.IsClosed);
-		}
-
-		[Fact]
-		public void GetEnvelope_ReturnsEmptyEnvelopeForEmptyLineString() {
-			LineString target = new LineString();
-			Envelope envelope = target.GetEnvelope();
-
-			Assert.Equal(Envelope.Empty, envelope);
-		}
-		
-		[Fact]
-		public void GetEnvelope_ReturnsEnvelopeOfLineString() {
-			LineString target = new LineString(_coordinatesXYZ);
-			Envelope expected = new Envelope(_coordinatesXYZ);
-
-			Assert.Equal(expected, target.GetEnvelope());
-		}		
-	}
+            envelope.Should().Equals(new Envelope(_coordinatesXYZ));
+        }
+    }
 }

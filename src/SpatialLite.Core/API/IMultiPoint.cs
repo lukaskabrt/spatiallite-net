@@ -1,7 +1,9 @@
-﻿namespace SpatialLite.Core.API {
+﻿namespace SpatialLite.Core.Api
+{
     /// <summary>
-    /// Defines properties and methods collections of points.
+    /// Represents a collection of <see cref="IPoint"/>.
     /// </summary>
-    public interface IMultiPoint : IGeometryCollection<IPoint> {
-	}
+    public interface IMultiPoint : IGeometryCollection<IPoint>
+    {
+    }
 }

@@ -1,7 +1,9 @@
-﻿namespace SpatialLite.Core.API {
+﻿namespace SpatialLite.Core.Api
+{
     /// <summary>
-    /// Defines properties and methodss for Collection of LineStrings.
+    /// Represents a collection of <see cref="ILineString"/>.
     /// </summary>
-    public interface IMultiLineString : IGeometryCollection<ILineString> {
-	}
+    public interface IMultiLineString : IGeometryCollection<ILineString>
+    {
+    }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -13,19 +13,17 @@
   <ItemGroup>
     <Compile Remove="Algorithms\**" />
     <Compile Remove="Data\**" />
-    <Compile Remove="Geometries\**" />
     <Compile Remove="IO\**" />
     <EmbeddedResource Remove="Algorithms\**" />
     <EmbeddedResource Remove="Data\**" />
-    <EmbeddedResource Remove="Geometries\**" />
     <EmbeddedResource Remove="IO\**" />
     <None Remove="Algorithms\**" />
     <None Remove="Data\**" />
-    <None Remove="Geometries\**" />
     <None Remove="IO\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Geometries\ReadOnlyCoordinateListTests.cs" />
     <Compile Remove="MeasurementsTests.cs" />
     <Compile Remove="PathHelper.cs" />
     <Compile Remove="TopologyTests.cs" />

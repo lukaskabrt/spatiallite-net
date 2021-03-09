@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 
 namespace Tests.SpatialLite.Core.FluentAssertions
 {

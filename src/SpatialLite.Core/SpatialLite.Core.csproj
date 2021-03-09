@@ -26,13 +26,10 @@
 
   <ItemGroup>
     <Compile Remove="Algorithms\**" />
-    <Compile Remove="Geometries\**" />
     <Compile Remove="IO\**" />
     <EmbeddedResource Remove="Algorithms\**" />
-    <EmbeddedResource Remove="Geometries\**" />
     <EmbeddedResource Remove="IO\**" />
     <None Remove="Algorithms\**" />
-    <None Remove="Geometries\**" />
     <None Remove="IO\**" />
   </ItemGroup>
 

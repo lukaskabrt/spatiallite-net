@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using System;
 using Xunit;
 

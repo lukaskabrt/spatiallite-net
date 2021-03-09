@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SpatialLite.Core.API
+namespace SpatialLite.Core.Api
 {
     /// <summary>
     /// Represents minimal bounding box of a set of coordinates.

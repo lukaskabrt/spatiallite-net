@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SpatialLite.Core.API
+namespace SpatialLite.Core.Api
 {
     /// <summary>
     /// Represents a location in the coordinate space.

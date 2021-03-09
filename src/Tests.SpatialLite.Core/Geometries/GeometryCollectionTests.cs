@@ -1,112 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
+using FluentAssertions;
+using SpatialLite.Core.Api;
+using SpatialLite.Core.Geometries;
 using Xunit;
 
-using SpatialLite.Core;
-using SpatialLite.Core.API;
-using SpatialLite.Core.Geometries;
+namespace Tests.SpatialLite.Core.Geometries
+{
+    public class GeometryCollectionTests
+    {
 
-namespace Tests.SpatialLite.Core.Geometries {
-	public class GeometryCollectionTests {
+        Point[] _geometries;
 
-		Point[] _geometries;
+        Coordinate[] _coordinatesXYZ = new Coordinate[] {
+                new Coordinate(12,10,100),
+                new Coordinate(22,20,200),
+                new Coordinate(32,30,300)
+        };
 
-		Coordinate[] _coordinatesXYZM = new Coordinate[] {
-				new Coordinate(12,10,100, 1000),
-				new Coordinate(22,20,200, 2000),
-				new Coordinate(32,30,300, 3000)
-		};
+        public GeometryCollectionTests()
+        {
+            _geometries = new Point[2];
+            _geometries[0] = new Point(1, 2, 3);
+            _geometries[1] = new Point(2, 3, 4);
+        }
 
-		public GeometryCollectionTests() {
-			_geometries = new Point[3];
-			_geometries[0] = new Point(1, 2, 3);
-			_geometries[1] = new Point(1.1, 2.1, 3.1);
-			_geometries[2] = new Point(1.2, 2.2, 3.2);
-		}
+        [Fact]
+        public void Constructor_CreatesNewEmptyCollection()
+        {
+            var target = new GeometryCollection<Geometry>();
 
-		private void CheckGeometries(GeometryCollection<Geometry> target, Geometry[] geometries) {
-			Assert.Equal(geometries.Length, target.Geometries.Count);
+            target.Geometries.Should().BeEmpty();
+        }
 
-			for (int i = 0; i < geometries.Length; i++) {
-				Assert.Same(geometries[i], target.Geometries[i]);
-			}
-		}
+        [Fact]
+        public void Constructor_CreateNewCollectionWithData()
+        {
+            var target = new GeometryCollection<Geometry>(_geometries);
 
-		[Fact]
-		public void Constructor__CreatesNewEmptyCollection() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>();
+            target.Geometries.Should().BeEquivalentTo(_geometries);
+        }
 
-			Assert.NotNull(target.Geometries);
-			Assert.Empty(target.Geometries);
-		}
+        [Fact]
+        public void Is3D_ReturnsFalseForEmptyCollection()
+        {
+            var target = new GeometryCollection<Geometry>();
 
-		[Fact]
-		public void Constructor_IEnumerable_CreateNewCollectionWithData() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(_geometries);
+            target.Is3D.Should().BeFalse();
+        }
 
-			CheckGeometries(target, _geometries);
-		}
+        [Fact]
+        public void Is3D_ReturnsFalseForCollectionOf2DObjects()
+        {
+            var members2d = new Geometry[] { new Point(1, 2), new Point(2, 3) };
+            var target = new GeometryCollection<Geometry>(members2d);
 
-		[Fact]
-		public void Is3D_ReturnsFalseForEmptyCollection() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>();
+            target.Is3D.Should().BeFalse();
+        }
 
-			Assert.False(target.Is3D);
-		}
+        [Fact]
+        public void Is3D_ReturnsTrueForCollectionWithAtLeastOne3DObject()
+        {
+            var target = new GeometryCollection<Geometry>(_geometries);
 
-		[Fact]
-		public void Is3D_ReturnsFalseForCollectionOf2DObjects() {
-			var members2d = new Geometry[] { new Point(1, 2), new Point(2, 3) };
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(members2d);
+            target.Is3D.Should().BeTrue();
+        }
 
-			Assert.False(target.Is3D);
-		}
+        [Fact]
+        public void GetEnvelopeReturnsEmptyEnvelopeForEmptyCollection()
+        {
+            var target = new GeometryCollection<Geometry>();
 
-		[Fact]
-		public void Is3D_ReturnsTrueForCollectionWithAtLeastOne3DObject() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(_geometries);
+            var envelope = target.GetEnvelope();
 
-			Assert.True(target.Is3D);
-		}
+            envelope.IsEmpty.Should().BeTrue();
+        }
 
-		[Fact]
-		public void IsMeasured_ReturnsFalseForEmptyCollection() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>();
+        [Fact]
+        public void GetEnvelopeReturnsUnionOfMembersEnvelopes()
+        {
+            var expected = new Envelope(new Coordinate[] { _geometries[0].Position, _geometries[1].Position });
+            var target = new GeometryCollection<Geometry>(_geometries);
 
-			Assert.False(target.IsMeasured);
-		}
+            var envelope = target.GetEnvelope();
 
-		[Fact]
-		public void IsMeasured_ReturnsFalseForCollectionOfNonMeasuredObjects() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(_geometries);
-
-			Assert.False(target.IsMeasured);
-		}
-
-		[Fact]
-		public void IsMeasured_ReturnsTrueForCollectionWithAtLeastOneMeasuredObject() {
-			var members = new Geometry[] { new Point(1, 2), new Point(2, 3, 4, 5) };
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(members);
-
-			Assert.True(target.IsMeasured);
-		}
-
-		[Fact]
-		public void GetEnvelopeReturnsEmptyEnvelopeForEmptyCollection() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>();
-
-			Assert.Equal(Envelope.Empty, target.GetEnvelope());
-		}
-
-		[Fact]
-		public void GetEnvelopeReturnsUnionOfMembersEnvelopes() {
-			GeometryCollection<Geometry> target = new GeometryCollection<Geometry>(_geometries);
-			Envelope expected = new Envelope(new Coordinate[] {_geometries[0].Position, _geometries[1].Position, _geometries[2].Position});
-
-			Assert.Equal(expected, target.GetEnvelope());
-		}
-	}
+            envelope.Should().Equals(expected);
+        }
+    }
 }

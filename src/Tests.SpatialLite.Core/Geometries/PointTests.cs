@@ -6,120 +6,78 @@ using System.Text;
 using Xunit;
 
 using SpatialLite.Core;
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Core.Geometries;
+using FluentAssertions;
+using Tests.SpatialLite.Core.FluentAssertions;
 
 namespace Tests.SpatialLite.Core.Geometries {
 	public class PointTests {
 
-		double _xOrdinate = 3.5;
-		double _yOrdinate = 4.2;
-		double _zOrdinate = 10.5;
-		double _mValue = 100.4;
+		const float _xCoordinate = 3.5f;
+		const float _yCoordinate = 4.2f;
+		const float _zCoordinate = 10.5f;
 
-		Coordinate _coordinate;
-		public PointTests() {
-			_coordinate = new Coordinate(_xOrdinate, _yOrdinate, _zOrdinate, _mValue);
-		}
-
-		private void ChenckPosition(Point target, double x, double y, double z, double m) {
-			Assert.Equal(x, target.Position.X);
-			Assert.Equal(y, target.Position.Y);
-			Assert.Equal(z, target.Position.Z);
-			Assert.Equal(m, target.Position.M);
-		}
-
+		Coordinate _coordinate = new (_xCoordinate, _yCoordinate, _zCoordinate);
+		
 		[Fact]
 		public void Constructor__CreatesPointWithEmptyPosition() {
 			Point target = new Point();
 
-			Assert.Equal(Coordinate.Empty, target.Position);
+			target.Position.IsEmpty.Should().BeTrue();
 		}
 
 		[Fact]
 		public void Constructor_XY_SetsCoordinates() {
-			Point target = new Point(_xOrdinate, _yOrdinate);
+			var target = new Point(_xCoordinate, _yCoordinate);
 
-			ChenckPosition(target, _xOrdinate, _yOrdinate, double.NaN, double.NaN);
+			target.Position.ShouldHaveCoordinates(_xCoordinate, _yCoordinate, float.NaN);
 		}
 
 		[Fact]
 		public void Constructor_XYZ_SetsCoordinates() {
-			Point target = new Point(_xOrdinate, _yOrdinate, _zOrdinate);
+			Point target = new Point(_xCoordinate, _yCoordinate, _zCoordinate);
 
-			ChenckPosition(target, _xOrdinate, _yOrdinate, _zOrdinate, double.NaN);
-		}
-
-		[Fact]
-		public void Constructor_XYZM_SetsCoordinates() {
-			Point target = new Point(_xOrdinate, _yOrdinate, _zOrdinate, _mValue);
-
-			ChenckPosition(target, _xOrdinate, _yOrdinate, _zOrdinate, _mValue);
+			target.Position.ShouldHaveCoordinates(_xCoordinate, _yCoordinate, _zCoordinate);
 		}
 
 		[Fact]
 		public void Constructor_Coordinate_SetsCoordinates() {
-			Point target = new Point(_coordinate);
+			var target = new Point(_coordinate);
 
-			Assert.Equal(_coordinate, target.Position);
+			target.Position.Should().Equals(_coordinate);
 		}
 
 		[Fact]
 		public void Is3D_ReturnsTrueFor3DPoint() {
-			Point target = new Point(_xOrdinate, _yOrdinate, _zOrdinate);
+			var target = new Point(_xCoordinate, _yCoordinate, _zCoordinate);
 
-			Assert.True(target.Is3D);
+			target.Is3D.Should().BeTrue();
 		}
 
 		[Fact]
 		public void Is3D_ReturnsFalseFor2DPoint() {
-			Point target = new Point(_xOrdinate, _yOrdinate);
+			var target = new Point(_xCoordinate, _yCoordinate);
 
-			Assert.False(target.Is3D);
-		}
-
-		[Fact]
-		public void IsMeasured_ReturnsTrueForMeasuredPoint() {
-			Point target = new Point(_xOrdinate, _yOrdinate, double.NaN, _mValue);
-
-			Assert.True(target.IsMeasured);
-		}
-
-		[Fact]
-		public void IsMeasured_ReturnsFalseForNonMeasuredPoint() {
-			Point target = new Point(_xOrdinate, _yOrdinate);
-
-			Assert.False(target.IsMeasured);
+			target.Is3D.Should().BeFalse();
 		}
 
 		[Fact]
 		public void GetEnvelope_ReturnsEmptyEnvelopeForEmptyPoint() {
-			Point target = new Point();
-			Envelope envelope = target.GetEnvelope();
+			var target = new Point();
+			
+			var envelope = target.GetEnvelope();
 
-			Assert.Equal(double.NaN, envelope.MinX);
-			Assert.Equal(double.NaN, envelope.MaxX);
-			Assert.Equal(double.NaN, envelope.MinY);
-			Assert.Equal(double.NaN, envelope.MaxY);
-			Assert.Equal(double.NaN, envelope.MinZ);
-			Assert.Equal(double.NaN, envelope.MaxZ);
-			Assert.Equal(double.NaN, envelope.MinM);
-			Assert.Equal(double.NaN, envelope.MaxM);
+			envelope.IsEmpty.Should().BeTrue();
 		}
 
 		[Fact]
 		public void GetEnvelope_ReturnsEnvelopeThatCoversOnePoint() {
-			Point target = new Point(_coordinate);
-			Envelope envelope = target.GetEnvelope();
+			var target = new Point(_coordinate);
 
-			Assert.Equal(_coordinate.X, envelope.MinX);
-			Assert.Equal(_coordinate.X, envelope.MaxX);
-			Assert.Equal(_coordinate.Y, envelope.MinY);
-			Assert.Equal(_coordinate.Y, envelope.MaxY);
-			Assert.Equal(_coordinate.Z, envelope.MinZ);
-			Assert.Equal(_coordinate.Z, envelope.MaxZ);
-			Assert.Equal(_coordinate.M, envelope.MinM);
-			Assert.Equal(_coordinate.M, envelope.MaxM);
+			var envelope = target.GetEnvelope();
+
+			envelope.ShouldHaveBounds(_xCoordinate, _xCoordinate, _yCoordinate, _yCoordinate);
 		}
 	}
 }
