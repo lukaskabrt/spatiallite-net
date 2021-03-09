@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Core.Geometries;
 
 namespace SpatialLite.Osm.Geometries {
@@ -67,7 +67,7 @@ namespace SpatialLite.Osm.Geometries {
 		/// <summary>
 		/// Gets the list of çoordinates of this Way.
 		/// </summary>
-		public override ICoordinateList Coordinates {
+		public override ICoordinateSequence Coordinates {
 			get {
 				return _coordinatesAdapter;
 			}

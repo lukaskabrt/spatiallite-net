@@ -4,15 +4,15 @@ using System.Linq;
 
 using Xunit;
 
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Osm.Geometries;
 
 namespace Tests.SpatialLite.Osm.Geometries {
     public class WayCoordinateListTests {
         List<Node> _nodes = new List<Node>(new Node[] {
-            new Node(5, 1.1, 2.2),
-            new Node(6, 10.1, -20.2),
-            new Node(7, -30.1, 40.2) });
+            new Node(5, 1.1f, 2.2f),
+            new Node(6, 10.1f, -20.2f),
+            new Node(7, -30.1f, 40.2f) });
 
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Tests.SpatialLite.Osm.Geometries {
         public void Indexer_Set_ThrowsNotSupportedException() {
             WayCoordinateList target = new WayCoordinateList(_nodes);
 
-            Assert.Throws<NotSupportedException>(() => target[0] = new Coordinate(10.1, 11.2));
+            Assert.Throws<NotSupportedException>(() => target[0] = new Coordinate(10.1f, 11.2f));
         }
 
         [Fact]

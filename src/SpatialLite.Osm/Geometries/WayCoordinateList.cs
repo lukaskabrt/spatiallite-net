@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 
 namespace SpatialLite.Osm.Geometries {
     /// <summary>
     /// Provides a read-only wrapper around list of Nodes that implements ICoordinateList interface.
     /// </summary>
-    internal class WayCoordinateList : ICoordinateList {
+    internal class WayCoordinateList : ICoordinateSequence {
 
 		/// <summary>
 		/// Initializes a new instance of the WayCoordinateList class with specified source list fo nodes

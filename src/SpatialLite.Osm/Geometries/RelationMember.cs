@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Core.Geometries;
 
 namespace SpatialLite.Osm.Geometries {
@@ -71,15 +71,6 @@ namespace SpatialLite.Osm.Geometries {
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="Geometry"/> has M values.
-		/// </summary>
-		public override bool IsMeasured {
-			get {
-				return ((Geometry)this.Member).IsMeasured;
-			}
-		}
-
-		/// <summary>
 		/// Creates a new instance of the RelationMember class based on the data from RelationInfo object.
 		/// </summary>
 		/// <param name="info">The RelationMemberInfo object that contains data about member.</param>
@@ -122,7 +113,7 @@ namespace SpatialLite.Osm.Geometries {
         /// Gets collection of all <see cref="Coordinate"/> of this IGeometry object
         /// </summary>
         /// <returns>the collection of all <see cref="Coordinate"/> of this object</returns>
-        public override IEnumerable<Coordinate> GetCoordinates() {
+        public override IReadOnlyList<Coordinate> GetCoordinates() {
             return this.Member.GetCoordinates();
         }
     }

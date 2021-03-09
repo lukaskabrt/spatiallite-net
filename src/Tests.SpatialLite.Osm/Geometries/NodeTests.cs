@@ -1,7 +1,7 @@
 ﻿using Xunit;
 
 using SpatialLite.Core;
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Osm;
 using SpatialLite.Osm.Geometries;
 
@@ -22,7 +22,7 @@ namespace Tests.SpatialLite.Osm.Geometry {
 		[Fact]
 		public void Constructor_int_double_double_CreatesNodeAndInitializeProperties() {
 			int id = 11;
-			Coordinate coord = new Coordinate(-15.6, 68.7);
+			Coordinate coord = new Coordinate(-15.6f, 68.7f);
 			Node target = new Node(id, coord.X, coord.Y);
 
 			Assert.Equal(target.Position.X, coord.X);
@@ -35,7 +35,7 @@ namespace Tests.SpatialLite.Osm.Geometry {
 		[Fact]
 		public void Constructor_int_double_double_Tags_CreatesNodeAndInitializesProperties() {
 			int id = 11;
-			Coordinate coord = new Coordinate(-15.6, 68.7);
+			Coordinate coord = new Coordinate(-15.6f, 68.7f);
 			TagsCollection tags = new TagsCollection();
 
 			Node target = new Node(id, coord.X, coord.Y, tags);
@@ -50,7 +50,7 @@ namespace Tests.SpatialLite.Osm.Geometry {
 		[Fact]
 		public void Constructor_int_Coordinate_CreatesNodeAndInitializeProperties() {
 			int id = 11;
-			Coordinate coord = new Coordinate(-15.6, 68.7);
+			Coordinate coord = new Coordinate(-15.6f, 68.7f);
 			Node target = new Node(id, coord);
 
 			Assert.Equal(id, target.ID);
@@ -62,7 +62,7 @@ namespace Tests.SpatialLite.Osm.Geometry {
 		[Fact]
 		public void Constructor_int_Coordinate_Tags_CreatesNodeAndInitializeProperties() {
 			int id = 11;
-			Coordinate coord = new Coordinate(-15.6, 68.7);
+			Coordinate coord = new Coordinate(-15.6f, 68.7f);
 			TagsCollection tags = new TagsCollection();
 
 			Node target = new Node(id, coord, tags);
@@ -75,7 +75,7 @@ namespace Tests.SpatialLite.Osm.Geometry {
 
 		[Fact]
 		public void Constructor_NodeInfo_CreatesNodeFromNodeInfo() {
-			NodeInfo info = new NodeInfo(1, 15.6, 20.4, new TagsCollection(), new EntityMetadata());
+			NodeInfo info = new NodeInfo(1, 15.6f, 20.4f, new TagsCollection(), new EntityMetadata());
 
 			Node target = Node.FromNodeInfo(info);
 

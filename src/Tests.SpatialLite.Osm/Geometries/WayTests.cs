@@ -12,9 +12,9 @@ using SpatialLite.Osm;
 namespace Tests.SpatialLite.Osm.Geometries {
     public class WayTests {
         List<Node> _nodes = new List<Node>(new Node[] { 
-			new Node(1, 1.1, 2.2),
-			new Node(2, 10.1, -20.2),
-			new Node(3, -30.1, 40.2) });
+			new Node(1, 1.1f, 2.2f),
+			new Node(2, 10.1f, -20.2f),
+			new Node(3, -30.1f, 40.2f) });
 
         WayInfo _wayEmptyInfo = new WayInfo(10, new TagsCollection(), new List<long>(), new EntityMetadata());
         WayInfo _wayInfo = new WayInfo(10, new TagsCollection(), new long[] { 1, 2, 3 }, new EntityMetadata());

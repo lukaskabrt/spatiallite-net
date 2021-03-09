@@ -11,8 +11,8 @@ namespace Tests.SpatialLite.Osm {
 		[Fact]
 		public void Constructor_PropertiesWithoutEntityDetails_SetsProperties() {
 			int id = 15;
-			double latitude = 15.4;
-			double longitude = -23.7;
+			var latitude = 15.4f;
+			var longitude = -23.7f;
 			TagsCollection tags = new TagsCollection();
 
 			NodeInfo target = new NodeInfo(id, latitude, longitude, tags);
@@ -28,8 +28,8 @@ namespace Tests.SpatialLite.Osm {
 		[Fact]
 		public void Constructor_Properties_SetsProperties() {
 			int id = 15;
-			double latitude = 15.4;
-			double longitude = -23.7;
+			var latitude = 15.4f;
+			var longitude = -23.7f;
 			TagsCollection tags = new TagsCollection();
 			EntityMetadata details = new EntityMetadata();
 
@@ -45,7 +45,7 @@ namespace Tests.SpatialLite.Osm {
 
 		[Fact]
 		public void Constructor_Node_SetsProperties() {
-			Node node = new Node(1, 10.1, 12.1, new TagsCollection()) { Metadata = new EntityMetadata() };
+			Node node = new Node(1, 10.1f, 12.1f, new TagsCollection()) { Metadata = new EntityMetadata() };
 
 			NodeInfo target = new NodeInfo(node);
 

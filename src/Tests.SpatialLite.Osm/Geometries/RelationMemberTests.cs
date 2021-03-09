@@ -4,7 +4,7 @@ using Xunit;
 using Moq;
 
 using SpatialLite.Osm.Geometries;
-using SpatialLite.Core.API;
+using SpatialLite.Core.Api;
 using SpatialLite.Osm;
 
 namespace Tests.SpatialLite.Osm.Geometries {
@@ -13,7 +13,7 @@ namespace Tests.SpatialLite.Osm.Geometries {
 
 		public RelationMemberTests() {
 			Mock<IEntityCollection<IOsmGeometry>> _nodesCollectionM = new Mock<IEntityCollection<IOsmGeometry>>();
-			_nodesCollectionM.SetupGet(c => c[1, EntityType.Node]).Returns(new Node(1, 1.1, 2.2));
+			_nodesCollectionM.SetupGet(c => c[1, EntityType.Node]).Returns(new Node(1, 1.1f, 2.2f));
 			_nodesCollectionM.Setup(c => c.Contains(1, EntityType.Node)).Returns(true);
 			_nodesEntityCollection = _nodesCollectionM.Object;
 		}
@@ -106,26 +106,6 @@ namespace Tests.SpatialLite.Osm.Geometries {
 		}
 
 		[Fact]
-		public void IsMeasured_GetsTrueForMeasuredMember() {
-			Mock<Node> memberM = new Mock<Node>(11);
-			memberM.SetupGet(property => property.IsMeasured).Returns(true);
-
-			RelationMember target = new RelationMember(memberM.Object);
-
-			Assert.Equal(memberM.Object.IsMeasured, target.IsMeasured);
-		}
-
-		[Fact]
-		public void IsMeasured_GetFalseForNonMeasuredMember() {
-			Mock<Node> memberM = new Mock<Node>(11);
-			memberM.SetupGet(property => property.IsMeasured).Returns(false);
-
-			RelationMember target = new RelationMember(memberM.Object);
-
-			Assert.Equal(memberM.Object.IsMeasured, target.IsMeasured);
-		}
-
-		[Fact]
 		public void MemberType_ReturnsCorrectValueForNode() {
 			RelationMember target = new RelationMember(new Node(11));
 
@@ -148,13 +128,13 @@ namespace Tests.SpatialLite.Osm.Geometries {
 
 		[Fact]
 		public void GetEnvelopeReturnsMembersEnvelope() {
-			Envelope expectedEnvelope = new Envelope(new Coordinate(1.1, 2.2));
+			Envelope expectedEnvelope = new Envelope(new Coordinate(1.1f, 2.2f));
 			Mock<Way> member = new Mock<Way>(11);
 			member.Setup(function => function.GetEnvelope()).Returns(expectedEnvelope);
 
 			RelationMember target = new RelationMember(member.Object);
 
-			Assert.Same(expectedEnvelope, target.GetEnvelope());
+			Assert.Equal(expectedEnvelope, target.GetEnvelope());
 		}
 	}
 }

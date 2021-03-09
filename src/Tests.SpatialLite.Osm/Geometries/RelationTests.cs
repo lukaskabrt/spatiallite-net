@@ -16,7 +16,7 @@ namespace Tests.SpatialLite.Osm.Geometries {
 
 		public RelationTests() {
 			Mock<IEntityCollection<IOsmGeometry>> _nodesCollectionM = new Mock<IEntityCollection<IOsmGeometry>>();
-			_nodesCollectionM.SetupGet(c => c[1, EntityType.Node]).Returns(new Node(1, 1.1, 2.2));
+			_nodesCollectionM.SetupGet(c => c[1, EntityType.Node]).Returns(new Node(1, 1.1f, 2.2f));
             _nodesCollectionM.Setup(c => c.Contains(1, EntityType.Node)).Returns(true);
 
 			_nodesEntityCollection = _nodesCollectionM.Object;

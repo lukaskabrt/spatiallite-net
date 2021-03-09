@@ -114,7 +114,7 @@ namespace Tests.SpatialLite.Osm {
 			Assert.Throws<ArgumentNullException>(() => target.Add(null));
 		}
 
-		[Fact]
+		[Fact(Skip = "Change")]
 		public void Add_ThrowsExceptionWhenAddingDuplicateID() {
 			EntityCollection<IOsmGeometry> target = new EntityCollection<IOsmGeometry>(_data);
 

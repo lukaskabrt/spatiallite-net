@@ -28,9 +28,9 @@ namespace Tests.SpatialLite.Osm.IO {
 				Changeset = 6410629
 			};
 
-			_node = new NodeInfo(1, 50.4, 16.2, new TagsCollection());
-			_nodeTags = new NodeInfo(1, 50.4, 16.2, new TagsCollection(new Tag[] { new Tag("name", "test"), new Tag("name-2", "test-2") }));
-			_nodeProperties = new NodeInfo(1, 50.4, 16.2, new TagsCollection(), _details);
+			_node = new NodeInfo(1, 50.4f, 16.2f, new TagsCollection());
+			_nodeTags = new NodeInfo(1, 50.4f, 16.2f, new TagsCollection(new Tag[] { new Tag("name", "test"), new Tag("name-2", "test-2") }));
+			_nodeProperties = new NodeInfo(1, 50.4f, 16.2f, new TagsCollection(), _details);
 
 			_way = new WayInfo(1, new TagsCollection(), new long[] { 10, 11, 12 });
 			_wayTags = new WayInfo(1, new TagsCollection(new Tag[] { new Tag("name", "test"), new Tag("name-2", "test-2") }), new long[] { 10, 11, 12 });
@@ -348,7 +348,7 @@ namespace Tests.SpatialLite.Osm.IO {
 
 		[Fact]
 		public void Write_IOsmGeometry_WritesNode() {
-			Node node = new Node(1, 11.1, 12.1);
+			Node node = new Node(1, 11.1f, 12.1f);
 			PbfWriterSettings settings = new PbfWriterSettings() { UseDenseFormat = false, Compression = CompressionMode.None, WriteMetadata = false };
 			MemoryStream stream = new MemoryStream();
 
@@ -405,7 +405,7 @@ namespace Tests.SpatialLite.Osm.IO {
 
 			//1000 nodes should fit into tokens
 			for (int i = 0; i < 1000; i++) {
-				NodeInfo node = new NodeInfo(i, 45.87, -126.5, new TagsCollection());
+				NodeInfo node = new NodeInfo(i, 45.87f, -126.5f, new TagsCollection());
 				target.Write(node);
 			}
 			int minimalExpectedLengthIncrease = 1000 * 8;

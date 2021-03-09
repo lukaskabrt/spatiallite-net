@@ -18,9 +18,9 @@ namespace Tests.SpatialLite.Osm.Geometries {
 
 		public OsmEntityInfoDatabaseTests() {
 			_nodeData = new NodeInfo[3];
-			_nodeData[0] = new NodeInfo(1, 10.1, 11.1, new TagsCollection());
-			_nodeData[1] = new NodeInfo(2, 10.2, 11.2, new TagsCollection());
-			_nodeData[2] = new NodeInfo(3, 10.3, 11.3, new TagsCollection());
+			_nodeData[0] = new NodeInfo(1, 10.1f, 11.1f, new TagsCollection());
+			_nodeData[1] = new NodeInfo(2, 10.2f, 11.2f, new TagsCollection());
+			_nodeData[2] = new NodeInfo(3, 10.3f, 11.3f, new TagsCollection());
 
 			_wayData = new WayInfo[2];
 			_wayData[0] = new WayInfo(10, new TagsCollection(), _nodeData.Select(n => n.ID).ToArray());
