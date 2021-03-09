@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -12,13 +12,10 @@
 
   <ItemGroup>
     <Compile Remove="Algorithms\**" />
-    <Compile Remove="Data\**" />
     <Compile Remove="IO\**" />
     <EmbeddedResource Remove="Algorithms\**" />
-    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="IO\**" />
     <None Remove="Algorithms\**" />
-    <None Remove="Data\**" />
     <None Remove="IO\**" />
   </ItemGroup>
 
@@ -27,6 +24,62 @@
     <Compile Remove="MeasurementsTests.cs" />
     <Compile Remove="PathHelper.cs" />
     <Compile Remove="TopologyTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="IO\WktReaderTests.cs" />
+    <Compile Include="IO\WktTokenizerTests.cs" />
+    <Compile Include="IO\WktTokensBufferTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\IO\collection-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-multi.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-nested.wkb" />
+    <EmbeddedResource Include="Data\IO\collection-pt-ls-poly.wkb" />
+    <EmbeddedResource Include="Data\IO\linestring-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\linestring-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\linestring-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\linestring-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\linestring-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\multilinestring-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\multilinestring-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multilinestring-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\multilinestring-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multilinestring-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\multipoint-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\multipoint-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multipoint-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\multipoint-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multipoint-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\multipolygon-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\multipolygon-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multipolygon-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\multipolygon-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\multipolygon-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\point-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\point-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\point-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\point-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-empty.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-ext-2D.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-ext-2DM.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-ext-3D.wkb" />
+    <EmbeddedResource Include="Data\IO\polygon-ext-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\two-points-3DM.wkb" />
+    <EmbeddedResource Include="Data\IO\wkt-geometry-collection-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-linestring-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-multilinestring-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-multipoint-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-multipolygon-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-point-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-point-and-linestring-3DM.wkt" />
+    <EmbeddedResource Include="Data\IO\wkt-polygon-3DM.wkt" />
   </ItemGroup>
 
   <ItemGroup>

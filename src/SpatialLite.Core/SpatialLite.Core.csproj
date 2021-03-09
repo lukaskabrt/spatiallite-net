@@ -37,4 +37,13 @@
     <Compile Remove="Measurements.cs" />
     <Compile Remove="Topology.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="IO\TokenType.cs" />
+    <Compile Include="IO\WktParseException.cs" />
+    <Compile Include="IO\WktReader.cs" />
+    <Compile Include="IO\WktToken.cs" />
+    <Compile Include="IO\WktTokenizer.cs" />
+    <Compile Include="IO\WktTokensBuffer.cs" />
+  </ItemGroup>
 </Project>

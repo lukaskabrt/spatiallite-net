@@ -30,6 +30,16 @@ namespace SpatialLite.Core.Geometries
         }
 
         /// <summary>
+        /// Initializes a new instance of the <c>Polygon</c> class with the given exterior boundary in WSG84 coordinate reference system.
+        /// </summary>
+        /// <param name="exteriorRing">The exterior boundary of the polygon.</param>
+        public Polygon(ICoordinateSequence exteriorRing, IReadOnlyList<ICoordinateSequence> interiorRings)
+        {
+            this.ExteriorRing = exteriorRing;
+            this.InteriorRings = interiorRings;
+        }
+
+        /// <summary>
         /// Gets or sets the exterior boundary of the polygon.
         /// </summary>
         public ICoordinateSequence ExteriorRing { get; set; }
